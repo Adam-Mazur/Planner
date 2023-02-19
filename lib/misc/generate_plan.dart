@@ -317,7 +317,6 @@ Future<void> refreshPlan() async {
     }
   }
   generatePlan();
-  await LocalNotification.debug();
 }
 
 Future<void> refreshNotifications() async {
@@ -339,5 +338,4 @@ Future<void> refreshNotifications() async {
       }
     }
   );
-  await LocalNotification.debug();
 }
