@@ -6,7 +6,8 @@ import 'package:planner/misc/fonts.dart';
 import 'package:flutter/material.dart';
 
 Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData> plan) async {
-  int? duration = 10;
+  int duration = 10;
+  bool cancel = false;
 
   await showDialog(
     context: context, 
@@ -27,9 +28,9 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
                   color: secondaryColor,
                   child: InkWell(
                     onTap: () {
-                      if (duration! > 1) {
+                      if (duration > 1) {
                         setState(() {
-                          duration = duration! - 1;
+                          duration = duration - 1;
                         });
                       }
                     },
@@ -76,9 +77,9 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
                   color: secondaryColor,
                   child: InkWell(
                     onTap: () {
-                      if (duration! < GetData.settingsPostoneDuration) {
+                      if (duration < GetData.settingsPostoneDuration) {
                         setState(() {
-                          duration = duration! + 1;
+                          duration = duration + 1;
                         });
                       }
                     },
@@ -104,7 +105,7 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
           TextButton(
             onPressed: () {
               setState(() {
-                duration = null;
+                cancel = true;
               });
               Navigator.pop(context);
             },
@@ -126,7 +127,7 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
     ),
   );
 
-  if(duration != null) {
+  if(!cancel) {
     plan.sort(
       (a, b) =>
         (a.endTime.hour * 60 + a.endTime.minute) -
@@ -154,8 +155,8 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
         name: plan[index-1].name, 
         startTime: plan[index-1].startTime, 
         endTime: TimeOfDay(
-          hour: (plan[index-1].endTime.hour * 60 + plan[index-1].endTime.minute + duration!)~/60, 
-          minute: (plan[index-1].endTime.hour * 60 + plan[index-1].endTime.minute + duration!)%60
+          hour: (plan[index-1].endTime.hour * 60 + plan[index-1].endTime.minute + duration)~/60, 
+          minute: (plan[index-1].endTime.hour * 60 + plan[index-1].endTime.minute + duration)%60
         )
       );
     }
@@ -163,10 +164,10 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
     int taskDuration = plan[index].endTime.hour * 60 + plan[index].endTime.minute 
                     - plan[index].startTime.hour * 60 - plan[index].startTime.minute;
 
-    if(taskDuration > duration!) {
+    if(taskDuration > duration) {
       var newTime = TimeOfDay(
-        hour: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration!)~/60, 
-        minute: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration!)%60
+        hour: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration)~/60, 
+        minute: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration)%60
       );
       plan[index] = CalendarData(
         name: plan[index].name, 
@@ -176,8 +177,8 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
   
     } else {
       var newStartTime = TimeOfDay(
-        hour: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration!)~/60, 
-        minute: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration!)%60
+        hour: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration)~/60, 
+        minute: (plan[index].startTime.hour * 60 + plan[index].startTime.minute + duration)%60
       );
 
       int nextTask = -1;
@@ -188,10 +189,10 @@ Future<List<CalendarData>> showPostpone(BuildContext context, List<CalendarData>
       TimeOfDay newEndTime;
 
       if(nextTask == -1 || 
-        nextTask>=plan[index].endTime.hour*60+plan[index].endTime.minute+duration!) {
+        nextTask>=plan[index].endTime.hour*60+plan[index].endTime.minute+duration) {
         newEndTime = TimeOfDay(
-          hour: (plan[index].endTime.hour * 60 + plan[index].endTime.minute + duration!)~/60, 
-          minute: (plan[index].endTime.hour * 60 + plan[index].endTime.minute + duration!)%60
+          hour: (plan[index].endTime.hour * 60 + plan[index].endTime.minute + duration)~/60, 
+          minute: (plan[index].endTime.hour * 60 + plan[index].endTime.minute + duration)%60
         );
       } else {
         newEndTime = TimeOfDay(
