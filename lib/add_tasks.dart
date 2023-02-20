@@ -260,9 +260,6 @@ class _AddTasksState extends State<AddTasks> {
 
                   }
                   
-                  // Updating the plan
-                  refreshPlan();
-
                   Navigator.pop(context);
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -272,6 +269,9 @@ class _AddTasksState extends State<AddTasks> {
                           : const Text("Added a new task"),
                     ),
                   );
+
+                  // Updating the plan
+                  refreshPlan();
                 }
               },
               // If The function was called to edit a task
@@ -317,16 +317,17 @@ class _AddTasksState extends State<AddTasks> {
                   var temp = [...GetData.savedTasks];
                   temp.removeAt(index);
                   GetData.savedTasks = temp;
-
-                  // Updating the plan
-                  refreshPlan();
                   
                   Navigator.pop(context);
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Removed a task"),
                     ),
                   );
+
+                  // Updating the plan
+                  refreshPlan();
                 },
                 label: Text(
                   "Remove Task",

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:planner/misc/generate_plan.dart';
 import 'package:planner/misc/multislider.dart';
 import 'package:planner/misc/get_data.dart';
 import 'package:planner/misc/colors.dart';
@@ -16,10 +19,40 @@ class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin 
   @override
   bool get wantKeepAlive => true;
   
+  DateTime? updateIn;
+  bool toUpdate = false;
+  bool disposeTimer = false;
+
+  // Disposing the timer, this solves a bug in which the timer was still running
+  // even when the widget was not in the widget tree, and flutter was throwing
+  // an exception
+  @override
+  void dispose() {
+    super.dispose();
+    disposeTimer = true;
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    
+    Timer.periodic(
+      const Duration(seconds: 1), 
+      (timer) async {
+        if(disposeTimer) {
+          timer.cancel();
+          return;
+        }
+        if(updateIn != null && updateIn!.isBefore(DateTime.now())) {
+          refreshPlan(dontAskForToday: true);
+          updateIn = null;
+        }
+        if(toUpdate) {
+          await refreshPlan(dontAskForToday: true);
+          toUpdate = false;
+        }
+      }
+    );
     
     return Container(
       color: mainColor,
@@ -44,6 +77,9 @@ class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin 
                     GetData.settingsDefaultSchedule = values;
                   });
                 }
+                setState(() {
+                  updateIn = DateTime.now().add(const Duration(seconds: 1));
+                });
               },
               color: secondaryColor,
               horizontalPadding: 0,
@@ -110,6 +146,11 @@ class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin 
                           GetData.settingsScheduleInAdvance -= 1;
                         });
                       }
+                      if(!toUpdate) {
+                        setState(() {
+                          toUpdate = true;
+                        });
+                      }
                     },
                     borderRadius: BorderRadius.circular(5),
                     child: SizedBox(
@@ -153,6 +194,11 @@ class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin 
                       if (GetData.settingsScheduleInAdvance < 100) {
                         setState(() {
                           GetData.settingsScheduleInAdvance += 1;
+                        });
+                      }
+                      if(!toUpdate) {
+                        setState(() {
+                          toUpdate = true;
                         });
                       }
                     },

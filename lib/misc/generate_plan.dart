@@ -1,3 +1,6 @@
+import 'package:planner/main.dart';
+import 'package:planner/misc/colors.dart';
+import 'package:planner/misc/fonts.dart';
 import 'package:planner/misc/notifications.dart';
 import 'package:planner/misc/calendar.dart';
 import 'package:planner/misc/get_data.dart';
@@ -271,52 +274,113 @@ List<CalendarData> generateRange(
 }
 
 
-Future<void> refreshPlan() async {
-  var tempPlan = {...GetData.planData};
-  Map<DateTime, List<CalendarData>> toRemove = {};
+Future<void> refreshPlan({bool dontAskForToday = false}) async {
+  bool changeThePlan = true;
+  bool changeForToday = true;
 
-  for(var planEntry in tempPlan.entries) {
-    var temp = planEntry.key.isAfter(
-      DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day
-      )
-    );
-    if (temp) {
-      toRemove.addAll({planEntry.key: planEntry.value});
-    }
-  }
-  
-  for(var i in toRemove.keys) {
-    tempPlan.remove(i);
-  }
+  ScaffoldMessenger.of(MyApp.navigatorKey.currentContext!).showSnackBar(
+    SnackBar(
+      duration: const Duration(seconds: 5),
+      content: const Text("Change the plan"),
+      action: SnackBarAction(
+        label: "Yes",
+        onPressed: () async {
+          if (!dontAskForToday) {
+            await showDialog(
+              context: MyApp.navigatorKey.currentContext!, 
+              builder: (context) => StatefulBuilder(
+                builder: (context, setState) => AlertDialog(
+                  backgroundColor: mainColor,
+                  title: Text("Change the plan", style: subtitleFont),
+                  content: const Text("Change the plan for today too?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }, 
+                      child: const Text("Yes")
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          changeForToday = false;
+                        });
+                        Navigator.pop(context);
+                      }, 
+                      child: const Text("No")
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          changeThePlan = false;
+                        });
+                        Navigator.pop(context);
+                      }, 
+                      child: const Text("Cancel")
+                    ),
+                  ],
+                )
+              )
+            );
+          } else {
+            changeForToday = false;
+          }
+        },
+      ), 
+    )
+  );
 
-  GetData.planData = tempPlan;
+  if (changeThePlan && !changeForToday) {
+    var tempPlan = {...GetData.planData};
+    Map<DateTime, List<CalendarData>> toRemove = {};
 
-  for(var j in toRemove.entries) {
-    for(int i = 0; i < j.value.length; i++) {
-      await LocalNotification.cancelNotification(
+    for(var planEntry in tempPlan.entries) {
+      var temp = planEntry.key.isAfter(
         DateTime(
-          j.key.year,
-          j.key.month,
-          j.key.day,
-          j.value[i].startTime.hour,
-          j.value[i].startTime.minute,
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day
         )
       );
-      await LocalNotification.cancelNotification(
-        DateTime(
-          j.key.year,
-          j.key.month,
-          j.key.day,
-          j.value[i].endTime.hour,
-          j.value[i].endTime.minute,
-        )
-      );
+      if (temp) {
+        toRemove.addAll({planEntry.key: planEntry.value});
+      }
     }
+    
+    for(var i in toRemove.keys) {
+      tempPlan.remove(i);
+    }
+
+    GetData.planData = tempPlan;
+
+    for(var j in toRemove.entries) {
+      for(int i = 0; i < j.value.length; i++) {
+        await LocalNotification.cancelNotification(
+          DateTime(
+            j.key.year,
+            j.key.month,
+            j.key.day,
+            j.value[i].startTime.hour,
+            j.value[i].startTime.minute,
+          )
+        );
+        await LocalNotification.cancelNotification(
+          DateTime(
+            j.key.year,
+            j.key.month,
+            j.key.day,
+            j.value[i].endTime.hour,
+            j.value[i].endTime.minute,
+          )
+        );
+      }
+    }
+    generatePlan();
+  } else if (changeThePlan && changeForToday) {
+    GetData.planData = {};
+    await LocalNotification.cancelAll();
+    generatePlan();
   }
-  generatePlan();
 }
 
 Future<void> refreshNotifications() async {

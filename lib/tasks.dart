@@ -263,7 +263,7 @@ class _TasksState extends State<Tasks> with AutomaticKeepAliveClientMixin {
     refreshPlan();
   }
 
-  void add(DragAndDropItem item, int importance){
+  void add(DragAndDropItem item, int importance) {
     setState(() {
       contents[contents.length - 1 - importance].children.add(item);
     });
