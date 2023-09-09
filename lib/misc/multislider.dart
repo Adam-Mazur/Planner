@@ -305,7 +305,7 @@ class _MultiSliderState extends State<MultiSlider> with TickerProviderStateMixin
         _convertValueToPixelPosition(updatedValues[_selectedInputIndex!])
       );
       _overlayEntry = _createOverlay();
-      Overlay.of(context)!.insert(_overlayEntry!);
+      Overlay.of(context).insert(_overlayEntry!);
       _controller.forward();
     }
   }

@@ -133,29 +133,19 @@ class _MainWidgetState extends State<MainWidget> {
                       pageIndex = 0;
                     });
                   },
-                  child: (pageIndex == 0)
-                      // selected
-                      ? Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: thirdColor,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Icon(Icons.settings_rounded,
-                              color: secondaryColor, size: 30),
-                        )
-                      // not selected
-                      : Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Icon(Icons.settings_rounded,
-                              color: grey, size: 30),
-                        ),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (pageIndex == 0) ? thirdColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(100)
+                    ),
+                    child: Icon(
+                      Icons.settings_rounded, 
+                      color: (pageIndex == 0) ? secondaryColor : grey,
+                      size: 30,
+                    ),
+                  )
                 ),
                 GestureDetector(
                   onTap: () {
@@ -163,29 +153,19 @@ class _MainWidgetState extends State<MainWidget> {
                       pageIndex = 1;
                     });
                   },
-                  child: (pageIndex == 1)
-                      // selected
-                      ? Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: thirdColor,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Icon(Icons.home_rounded,
-                              color: secondaryColor, size: 30),
-                        )
-                      // not selected
-                      : Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child:
-                              Icon(Icons.home_rounded, color: grey, size: 30),
-                        ),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (pageIndex == 1) ? thirdColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(100)
+                    ),
+                    child: Icon(
+                      Icons.home_rounded, 
+                      color: (pageIndex == 1) ? secondaryColor : grey,
+                      size: 30,
+                    ),
+                  )
                 ),
                 GestureDetector(
                   onTap: () {
@@ -193,31 +173,19 @@ class _MainWidgetState extends State<MainWidget> {
                       pageIndex = 2;
                     });
                   },
-                  child: (pageIndex == 2)
-                      // selected
-                      ? Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: thirdColor,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Icon(
-                            Icons.list_rounded, 
-                            color: secondaryColor, 
-                            size: 30
-                          ),
-                        )
-                      // not selected
-                      : Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Icon(Icons.list_rounded, color: grey, size: 30),
-                        ),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: (pageIndex == 2) ? thirdColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(100)
+                    ),
+                    child: Icon(
+                      Icons.list_rounded, 
+                      color: (pageIndex == 2) ? secondaryColor : grey,
+                      size: 30,
+                    ),
+                  )
                 ),
               ],
             ),

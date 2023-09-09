@@ -1,11 +1,9 @@
 import 'package:planner/misc/duration_format.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:planner/misc/calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
-
 
 // Defining the data type of the plan data
 typedef PlanData = Map<DateTime, List<CalendarData>>;    
@@ -33,7 +31,6 @@ abstract class GetData{
   static Map<DateTime, int> get homePageNumOfMinutes => _homePageNumOfMinutes;
   static List<TaskData> get savedTasks => _savedTasks;
 
-
   // Setters for the instance variables
   static set settingsDefaultSchedule(List<double> value) {
     _toUpdate = true;
@@ -60,27 +57,12 @@ abstract class GetData{
     _savedTasks = value;
   }
 
-
-  // Getting the path from the path_provider package
-  static Future<String> get _localPath async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  // Getting the file with the data
-  static Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/Planner.txt');
-  }
-
-
   static Future<void> writeData() async {
-    final file = await _localFile;
-
-    file.writeAsString(
-      jsonEncode(
+    final headers = {'Content-Type': 'application/json'};
+    var _ = await http.post(
+      Uri.parse("http://10.0.2.2:5000/update/1"),
+      headers: headers,
+      body: jsonEncode(
         {
           "_settingsDefaultSchedule": _settingsDefaultSchedule,
           "_settingsScheduleInAdvance": _settingsScheduleInAdvance,
@@ -114,7 +96,6 @@ abstract class GetData{
           ).toList()
         }
       ),
-      flush: true,
     );
 
     _toUpdate = false;
@@ -123,14 +104,15 @@ abstract class GetData{
   // Initialize the data
   static Future<void> start() async {
 
-    final file = await _localFile;
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(
+      Uri.parse("http://10.0.2.2:5000/get/1"), 
+      headers: headers, 
+    );
 
-    if(await file.exists()) {
-      // Read the file
-      Object contents = await file.readAsString();
-
-      contents = jsonDecode(contents as String);
-
+    Object? contents = jsonDecode(response.body);
+    
+    if (contents != null) {
       // Casting the [contents] to a Map, because [jsonDecode] funtion returns 
       // a JSON Object as a Map
       _settingsDefaultSchedule = List<double>.from((contents as Map)["_settingsDefaultSchedule"]);
@@ -210,7 +192,6 @@ abstract class GetData{
         );
       }
     }
-
     // Asynchronously checking every 0.5 seconds if the data is to be updated
     Timer.periodic(
       const Duration(milliseconds: 500),

@@ -173,7 +173,6 @@ void generatePlan() {
 
 }
 
-
 List<CalendarData> generateRange(
   List<TaskData> tasks, List<double> schedule, Random random) {
   List<CalendarData> plan = [];
@@ -272,7 +271,6 @@ List<CalendarData> generateRange(
   }
   return plan;
 }
-
 
 Future<void> refreshPlan({bool dontAskForToday = false}) async {
   bool changeThePlan = true;

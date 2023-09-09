@@ -229,9 +229,7 @@ class _HomePageState extends State<HomePage>
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
+                      Row(
                         children: [
                           Button(
                             text: "Modify the plan",
@@ -263,6 +261,7 @@ class _HomePageState extends State<HomePage>
                             isEnabled: true,
                             color: secondaryColor,
                           ),
+                          const SizedBox(width: 5),
                           Button(
                             text: "Postpone task",
                             func: postpone,
@@ -270,6 +269,11 @@ class _HomePageState extends State<HomePage>
                             isEnabled: true,
                             color: secondaryColor,
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
                           Button(
                             text: "Start next task",
                             func: startNext,
@@ -310,7 +314,7 @@ class _HomePageState extends State<HomePage>
                         ),
                         const SizedBox(width: 10),
                         SizedBox(
-                          width: 225,
+                          width: MediaQuery.of(context).size.width - 135,
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
@@ -401,7 +405,6 @@ class _HomePageState extends State<HomePage>
   }
 
 }
-
 
 class DateButton extends StatefulWidget {
   const DateButton({
